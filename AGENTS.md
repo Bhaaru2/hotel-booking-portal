@@ -55,6 +55,14 @@ Seed at least **5 hotels** (one room category per hotel is enough).
 - Booking reference: short, unique, human-friendly (e.g. `HB-7K2M9Q`), with a unique DB constraint
 - Cancellation is idempotent-safe: cancelling an already cancelled booking returns a clear message, and does not release inventory twice
 
+## Design decisions
+
+- Seed `room_inventory` for 120 days from the migration date; dates outside that range cannot be booked.
+- A stay occupies each night from check-in through the night before check-out. The check-out day is free, allowing back-to-back stays.
+- Generate short, random, human-friendly booking references (for example, `HB-7K2M9Q`) and enforce uniqueness in the database.
+- Use `LocalDate` for dates and `BigDecimal` / `DECIMAL(10,2)` for money; never use `double` for prices.
+- Booking lookup and cancellation require both reference and email. Return 404 for a wrong email, as for an unknown reference, so booking references cannot be probed.
+
 ## API (suggested)
 
 - `GET  /api/hotels?location=&checkIn=&checkOut=` list/search with availability
