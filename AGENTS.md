@@ -65,7 +65,7 @@ Seed at least **5 hotels** (one room category per hotel is enough).
 
 ## Surprise feature
 
-ONE small, finished feature. Chosen feature: **TO BE FILLED IN BEFORE BUILDING** (suggestion: when a search has no availability, show the nearest alternative dates / hotels that do have rooms). Document what, why, and how in DESIGN.md.
+ONE small, finished feature. Chosen feature: Chosen feature: **Alternative dates when a search has no availability.** If a hotel has no free room for the selected dates, the API also returns the nearest check-in dates (same number of nights, within +/- 7 days) that do have availability, and the UI shows them as clickable suggestions. Reuse the same per-night availability query. Keep it small: one service method, one extra field in the search/detail response, one UI component.
 
 ## Required automated tests (minimum)
 
