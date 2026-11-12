@@ -26,8 +26,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 |---|---|---|---|
 | S | Repo, GitHub and local environment setup | Setup | DONE |
 | 0 | Lock design decisions | Setup | DONE |
-| 1 | Spring Boot skeleton + MySQL connection | Backend | CURRENT |
-| 2 | V1 migration: tables | Backend | UPCOMING |
+| 1 | Spring Boot skeleton + MySQL connection | Backend | DONE |
+| 2 | V1 migration: tables | Backend | CURRENT |
 | 3 | V2 migration: seed data | Backend | UPCOMING |
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | UPCOMING |
 | 5 | Global error handler | Backend | UPCOMING |
@@ -71,7 +71,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Decisions confirmed by the user and reflected in AGENTS.md
 - Commit: `docs: lock design decisions`
 
-### 1. Spring Boot skeleton + MySQL connection: CURRENT
+### 1. Spring Boot skeleton + MySQL connection: DONE
 **Goal:** a Spring Boot app in `/backend` that starts and connects to MySQL.
 - Java 21, Maven, Spring Boot 3.x. Dependencies: web, data-jpa, validation, mysql driver, flyway-core + flyway-mysql, spring-boot-starter-test.
 - Base package `com.hotelbooking` with sub-packages: `controller`, `service`, `repository`, `entity`, `dto`, `exception`.
@@ -79,10 +79,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Add a short "Running the backend" section to README.md (`set -a; source .env; set +a` then `mvn spring-boot:run`).
 
 **Done when:** `mvn spring-boot:run` starts without errors and logs a successful DB connection.
-- [ ] Acceptance met, build passes
+- [x] Acceptance met, build passes (`mvn clean verify`)
 - Commit: `feat(backend): spring boot skeleton with mysql config`
 
-### 2. V1 migration: tables: UPCOMING
+### 2. V1 migration: tables: CURRENT
 **Goal:** Flyway `V1__create_schema.sql` creates the schema.
 - `hotels`: id, name, location, description, amenities, price_per_night DECIMAL(10,2), total_rooms.
 - `room_inventory`: id, hotel_id (FK), stay_date, total_rooms, booked_rooms, **UNIQUE (hotel_id, stay_date)**, CHECK booked_rooms between 0 and total_rooms.
