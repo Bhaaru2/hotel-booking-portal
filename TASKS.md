@@ -28,8 +28,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 0 | Lock design decisions | Setup | DONE |
 | 1 | Spring Boot skeleton + MySQL connection | Backend | DONE |
 | 2 | V1 migration: tables | Backend | DONE |
-| 3 | V2 migration: seed data | Backend | CURRENT |
-| 4 | Entities, repositories, `GET /api/hotels` | Backend | UPCOMING |
+| 3 | V2 migration: seed data | Backend | DONE |
+| 4 | Entities, repositories, `GET /api/hotels` | Backend | CURRENT |
 | 5 | Global error handler | Backend | UPCOMING |
 | 6 | Quote + create booking (locking + tests) | Backend | UPCOMING |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
@@ -93,16 +93,16 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Migration defines all required tables, constraints and indexes; `mvn clean verify` passes (live DB migration not run)
 - Commit: `feat(db): add V1 schema migration`
 
-### 3. V2 migration: seed data: CURRENT
+### 3. V2 migration: seed data: DONE
 **Goal:** Flyway `V2__seed_data.sql` inserts sample data.
-- 6 realistic hotels in different cities (name, location, description, comma-separated amenities, price per night, total rooms between 3 and 10, small so that sold-out cases are easy to test).
+- 6 realistic hotels in different cities (name, location, description, comma-separated amenities, price per night, total rooms between 3 and 8, small so that sold-out cases are easy to test).
 - `room_inventory` rows for every hotel for the next 120 days from the migration date.
 
 **Done when:** `SELECT COUNT(*) FROM hotels;` returns 6 and `room_inventory` has 6 x 120 rows.
-- [ ] Acceptance met
+- [x] SQL defines six hotels and a generated 120-day inventory window; `mvn clean verify` passes (live DB migration not run)
 - Commit: `feat(db): seed hotels and room inventory`
 
-### 4. Entities, repositories, `GET /api/hotels`: UPCOMING
+### 4. Entities, repositories, `GET /api/hotels`: CURRENT
 **Goal:** list hotels over REST.
 - JPA entities for hotels, room_inventory, bookings. Repositories. Response DTOs (never expose entities).
 - `GET /api/hotels?location=` returns all hotels, or those whose location contains the text (case-insensitive).
@@ -228,6 +228,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Inventory is pre-seeded for 120 days from the migration date.
 - A stay occupies nights from check-in to the night before check-out.
 - One room category per hotel; a booking is for exactly one room.
+- Inventory window starts at the migration date and covers 120 consecutive days.
 
 ## Open questions / notes (add as you go)
 
