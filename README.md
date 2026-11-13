@@ -174,7 +174,7 @@ Approximately 11 hours
 
 ## AI tools disclosure
 
-I built this code with heavy use of AI coding tools (Codex), in small reviewed steps tracked in `TASKS.md`. I reviewed and tested the output and can explain it.
+I built this project with heavy use of an AI coding tool (Codex), working in small steps tracked in TASKS.md. I chose the design decisions (per-night inventory, row locking, lookup by reference + email), ran and checked every step myself against the database and the browser, and reviewed the code. I can explain any part of it.
 
 ## Known limitations and unfinished items
 
@@ -182,5 +182,5 @@ I built this code with heavy use of AI coding tools (Codex), in small reviewed s
 - Each hotel has one room category, and each booking reserves one room.
 - There is no authentication, payment processing or administrative interface.
 - The application has no hotel images, pagination or deployment configuration.
-- The MySQL concurrency integration tests need a configured local MySQL database and were skipped in the database-free verification run.
-- A fresh-clone run-through and the submission email are still manual steps.
+- The concurrency integration tests need a local MySQL database. They are skipped unless the DB_* environment variables are set (see Running the tests)
+
