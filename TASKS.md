@@ -31,7 +31,9 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 3 | V2 migration: seed data | Backend | DONE |
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | DONE |
 | 5 | Global error handler | Backend | DONE |
-| 6 | Quote + create booking (locking + tests) | Backend | CURRENT |
+| 6a | Date validation, availability and read-only price quote | Backend | CURRENT |
+| 6b | Create booking with row locking and reference generation | Backend | UPCOMING |
+| 6c | Concurrency test and locking review | Backend | UPCOMING |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
 | 9a | Frontend: hotel list + search | Frontend | UPCOMING |
@@ -123,21 +125,39 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; MVC tests cover validation, malformed input, custom errors, unknown URLs, and generic failures
 - Commit: `feat(api): consistent error responses`
 
-### 6. Quote + create booking (locking + tests): CURRENT (highest priority chunk)
-**Goal:** the core booking flow, done correctly.
-- `GET /api/hotels/{id}?checkIn=&checkOut=`: hotel details plus availability for the dates and the price quote (nights x price per night).
-- `GET /api/hotels?location=&checkIn=&checkOut=`: search also reports availability for the dates.
-- `POST /api/bookings` (hotelId, checkIn, checkOut, guestName, guestEmail): creates a booking.
-- **Validation:** check-out after check-in; check-in not in the past; name and email required, email format valid; hotel must exist; dates within the seeded inventory range.
-- **Pricing:** computed on the backend only (`nights x pricePerNight`, `BigDecimal`).
-- **Availability:** per night, over nights check-in to check-out minus one. Fail with 409 if any night has no free room.
-- **Concurrency:** one `@Transactional` method; lock the affected `room_inventory` rows with `SELECT ... FOR UPDATE` (pessimistic write lock), ordered by date to avoid deadlocks; check capacity; increment `booked_rooms`; insert the booking. Add a short comment explaining this.
-- **Reference:** unique, human-friendly (`HB-XXXXXX`).
-- **Tests (JUnit):** total price calculation; date validation rules; overlapping stays reduce capacity; booking beyond capacity rejected; back-to-back stays allowed.
+### 6a. Dates, availability and read-only price quote: CURRENT
+**Goal:** validate requested stay dates, report per-night availability, and quote totals without creating bookings.
+- Provide a `Clock` bean using the `Asia/Kolkata` zone so date rules can be tested deterministically.
+- **Validation:** check-out after check-in; check-in cannot be in the past (today is allowed); maximum stay is 30 nights; all occupied nights must exist in seeded inventory, otherwise return a clear 400 error.
+- **Availability:** a stay occupies check-in through the night before check-out. Report available only when every night has capacity; `roomsLeft` is the minimum free-room count across the stay. Use one repository query for the requested date range, not one query per night.
+- **Pricing:** compute `nights x pricePerNight` using `BigDecimal`, on the backend only.
+- `GET /api/hotels/{id}?checkIn=&checkOut=` returns details and optional quote/availability fields; if only one date is supplied return 400; unknown hotel returns 404.
+- `GET /api/hotels?location=&checkIn=&checkOut=` includes quote/availability fields when both dates are supplied and preserves its existing response when dates are omitted.
+- **Tests:** price calculation; invalid date order, past check-in and stays over 30 nights; one date missing; availability across nights; minimum rooms left; back-to-back stays.
 
-**Done when:** `mvn test` passes and a curl `POST /api/bookings` returns a confirmation with a reference; booking the same last room twice returns 409 the second time.
+**Done when:** quote and availability endpoints pass the required tests and `mvn clean verify` passes.
 - [ ] Acceptance met, tests pass
-- Commit(s): `feat(booking): price quote and availability check`, `feat(booking): create booking with row locking`, `test(booking): pricing and availability rules`
+- Commit(s): `feat(booking): date validation and availability query`, `feat(booking): price quote on hotel details and search`, `test(booking): pricing and availability rules`
+
+### 6b. Create booking with row locking and reference generation: UPCOMING
+**Goal:** create a confirmed booking safely using the validated dates and availability logic from 6a.
+- `POST /api/bookings` (hotelId, checkIn, checkOut, guestName, guestEmail): validates the guest name/email, hotel, dates and inventory range, then creates one booking.
+- **Concurrency:** one `@Transactional` method; lock affected `room_inventory` rows with `SELECT ... FOR UPDATE` (pessimistic write lock), ordered by date to avoid deadlocks; check capacity, increment `booked_rooms`, then insert the booking. Add a short comment explaining this.
+- **Reference:** random, human-friendly (`HB-XXXXXX`), with uniqueness enforced by the database; handle collisions safely.
+- Tests for booking creation, overlapping stays reducing capacity, and rejecting booking beyond capacity.
+
+**Done when:** a curl `POST /api/bookings` returns a confirmation with a reference, and a second booking for the same last room returns 409.
+- [ ] Acceptance met, tests pass
+- Commit: `feat(booking): create booking with row locking`
+
+### 6c. Concurrency test and locking review: UPCOMING
+**Goal:** verify and review the last-room concurrency behavior implemented in 6b.
+- Add a concurrency-focused test proving simultaneous attempts for the last room cannot both succeed.
+- Review lock ordering, transaction boundaries, inventory increments and unique booking reference handling.
+
+**Done when:** concurrency test passes and locking review findings are addressed.
+- [ ] Acceptance met, test passes
+- Commit: `test(booking): verify concurrent last-room protection`
 
 ### 7. Lookup + cancel (with tests): UPCOMING
 **Goal:** retrieve and cancel a booking.
@@ -204,17 +224,17 @@ Decisions (confirm or change, then keep consistent everywhere):
 | Assignment requirement | Covered in |
 |---|---|
 | Browse hotels (name, location, description, amenities, price) | 4, 9a |
-| Search by location and dates | 6, 9a |
-| Hotel details + available rooms for dates | 6, 9b |
-| Book one room with name + email | 6, 9c |
-| Total amount shown before confirming (calculated on backend) | 6, 9b, 9c |
-| Booking confirmation with unique reference | 6, 9c |
+| Search by location and dates | 6a, 9a |
+| Hotel details + available rooms for dates | 6a, 9b |
+| Book one room with name + email | 6b, 9c |
+| Total amount shown before confirming (calculated on backend) | 6a, 9b, 9c |
+| Booking confirmation with unique reference | 6b, 9c |
 | Retrieve by reference + email, and cancel | 7, 9d |
 | 5+ sample hotels | 3 |
-| Date rules (check-out after check-in, no past check-in) | 6 |
-| Availability tracking, cancellation releases availability | 6, 7 |
+| Date rules (check-out after check-in, no past check-in) | 6a, 6b |
+| Availability tracking, cancellation releases availability | 6a, 6b, 7 |
 | Validation messages, graceful failures, consistent errors | 5, 9c |
-| Overlapping stays documented | 6, 10 (DESIGN.md) |
+| Overlapping stays documented | 6b, 6c, 10 (DESIGN.md) |
 | Surprise feature | 8, 9d, 10 |
 | Automated tests (pricing, availability) | 6, 7, 8 |
 | Database scripts + sample data | 2, 3 |
@@ -229,6 +249,8 @@ Decisions (confirm or change, then keep consistent everywhere):
 - A stay occupies nights from check-in to the night before check-out.
 - One room category per hotel; a booking is for exactly one room.
 - Inventory window starts at the migration date and covers 120 consecutive days.
+- Maximum stay is 30 nights.
+- “Today” for booking date validation uses the `Asia/Kolkata` time zone.
 
 ## Open questions / notes (add as you go)
 

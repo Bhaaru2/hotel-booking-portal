@@ -41,4 +41,20 @@ public class RoomInventory {
 
     protected RoomInventory() {
     }
+
+    public Long getHotelId() {
+        return hotel.getId();
+    }
+
+    public LocalDate getStayDate() {
+        return stayDate;
+    }
+
+    public Integer getTotalRooms() {
+        return totalRooms;
+    }
+
+    public Integer getBookedRooms() {
+        return bookedRooms;
+    }
 }
