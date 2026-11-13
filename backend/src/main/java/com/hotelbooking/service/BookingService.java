@@ -26,6 +26,8 @@ public class BookingService {
 
     private static final String REFERENCE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int REFERENCE_ATTEMPTS = 5;
+    private static final String BOOKING_NOT_FOUND_MESSAGE =
+            "Booking not found for the given reference and email";
 
     private final HotelRepository hotelRepository;
     private final RoomInventoryRepository roomInventoryRepository;
@@ -83,6 +85,22 @@ public class BookingService {
                 LocalDateTime.now(clock));
 
         return BookingResponse.from(bookingRepository.save(booking));
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse findBooking(String reference, String email) {
+        Booking booking = bookingRepository.findByReferenceAndGuestEmail(
+                        normalizeReference(reference), normalizeEmail(email))
+                .orElseThrow(() -> new ResourceNotFoundException(BOOKING_NOT_FOUND_MESSAGE));
+        return BookingResponse.from(booking);
+    }
+
+    private String normalizeReference(String reference) {
+        return reference.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     private String generateUniqueReference() {
