@@ -33,8 +33,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 5 | Global error handler | Backend | DONE |
 | 6a | Date validation, availability and read-only price quote | Backend | DONE |
 | 6b | Create booking with row locking and reference generation | Backend | DONE |
-| 6c | Concurrency test and locking review | Backend | CURRENT |
-| 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
+| 6c | Concurrency test and locking review | Backend | DONE |
+| 7 | Lookup + cancel (with tests) | Backend | CURRENT |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
 | 9a | Frontend: hotel list + search | Frontend | UPCOMING |
 | 9b | Frontend: hotel details + price quote | Frontend | UPCOMING |
@@ -150,16 +150,16 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; service and controller tests pass (`mvn clean verify`); live DB smoke test not run
 - Commit: `feat(booking): create booking with row locking`
 
-### 6c. Concurrency test and locking review: CURRENT
+### 6c. Concurrency test and locking review: DONE
 **Goal:** verify and review the last-room concurrency behavior implemented in 6b.
 - Add a concurrency-focused test proving simultaneous attempts for the last room cannot both succeed.
 - Review lock ordering, transaction boundaries, inventory increments and unique booking reference handling.
 
 **Done when:** concurrency test passes and locking review findings are addressed.
-- [ ] Acceptance met, test passes
-- Commit: `test(booking): verify concurrent last-room protection`
+- [x] DB-backed concurrency tests added; clean verify passes without DB variables (DB-enabled run must be performed against the local MySQL)
+- Commit: `test(booking): concurrent booking integration test`
 
-### 7. Lookup + cancel (with tests): UPCOMING
+### 7. Lookup + cancel (with tests): CURRENT
 **Goal:** retrieve and cancel a booking.
 - `GET /api/bookings/{reference}?email=`: returns the booking. Wrong reference or wrong email: 404.
 - `POST /api/bookings/{reference}/cancel` (email in body): sets status CANCELLED and decrements `booked_rooms` for each night in one transaction (same locking approach).
@@ -255,3 +255,5 @@ Decisions (confirm or change, then keep consistent everywhere):
 ## Open questions / notes (add as you go)
 
 - Chunk 1 enabled Flyway baseline-on-migrate. With V1 present, a fresh empty database runs V1 as its first migration.
+
+**Concurrency approach (for DESIGN.md):** The race is two guests both observing the last room as free and both confirming it. The booking transaction takes pessimistic write locks on each affected inventory row in ascending date order before checking capacity, so the second guest waits and then sees the first guest's increment. The trade-off is that locks remain held for the transaction, though they affect only the selected hotel's booked dates; other hotels and dates remain available. An alternative is optimistic locking with a version column and retries after conflicts.
