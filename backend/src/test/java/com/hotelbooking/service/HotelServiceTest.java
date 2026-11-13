@@ -57,7 +57,7 @@ class HotelServiceTest {
     @Test
     void calculatesTotalForStayUsingBigDecimal() {
         given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
-        given(roomInventoryRepository.findForStay(List.of(1L), CHECK_IN, CHECK_OUT))
+        given(roomInventoryRepository.findForHotelsInRange(List.of(1L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT)))
                 .willReturn(availableInventory(CHECK_IN, 3, 5, 0));
 
         HotelDetailResponse response = hotelService.getHotel(1L, CHECK_IN, CHECK_OUT);
@@ -99,7 +99,7 @@ class HotelServiceTest {
     @Test
     void rejectsAStayWhenOneOfItsNightsIsMissingFromInventory() {
         given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
-        given(roomInventoryRepository.findForStay(List.of(1L), CHECK_IN, CHECK_OUT))
+        given(roomInventoryRepository.findForHotelsInRange(List.of(1L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT)))
                 .willReturn(availableInventory(CHECK_IN, 2, 5, 0));
 
         assertThatThrownBy(() -> hotelService.getHotel(1L, CHECK_IN, CHECK_OUT))
@@ -110,7 +110,7 @@ class HotelServiceTest {
     @Test
     void reportsAvailableWhenEveryNightHasCapacityAndUsesMinimumRoomsLeft() {
         given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
-        given(roomInventoryRepository.findForStay(List.of(1L), CHECK_IN, CHECK_OUT))
+        given(roomInventoryRepository.findForHotelsInRange(List.of(1L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT)))
                 .willReturn(List.of(
                         inventory(hotel, CHECK_IN, 5, 1),
                         inventory(hotel, CHECK_IN.plusDays(1), 5, 3),
@@ -120,12 +120,15 @@ class HotelServiceTest {
 
         assertThat(response.available()).isTrue();
         assertThat(response.roomsLeft()).isEqualTo(2);
+        assertThat(response.alternativeDates()).isEmpty();
+        verify(roomInventoryRepository).findForHotelsInRange(
+                List.of(1L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT));
     }
 
     @Test
     void reportsUnavailableWhenAnySingleNightIsFull() {
         given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
-        given(roomInventoryRepository.findForStay(List.of(1L), CHECK_IN, CHECK_OUT))
+        given(roomInventoryRepository.findForHotelsInRange(List.of(1L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT)))
                 .willReturn(List.of(
                         inventory(hotel, CHECK_IN, 5, 0),
                         inventory(hotel, CHECK_IN.plusDays(1), 5, 5),
@@ -142,14 +145,16 @@ class HotelServiceTest {
         LocalDate previousCheckOut = CHECK_IN;
         LocalDate nextCheckOut = CHECK_IN.plusDays(1);
         given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
-        given(roomInventoryRepository.findForStay(List.of(1L), previousCheckOut, nextCheckOut))
+        given(roomInventoryRepository.findForHotelsInRange(
+                List.of(1L), rangeStart(previousCheckOut), rangeEnd(nextCheckOut)))
                 .willReturn(List.of(inventory(hotel, previousCheckOut, 5, 0)));
 
         HotelDetailResponse response = hotelService.getHotel(1L, previousCheckOut, nextCheckOut);
 
         assertThat(response.available()).isTrue();
         assertThat(response.roomsLeft()).isEqualTo(5);
-        verify(roomInventoryRepository).findForStay(List.of(1L), previousCheckOut, nextCheckOut);
+        verify(roomInventoryRepository).findForHotelsInRange(
+                List.of(1L), rangeStart(previousCheckOut), rangeEnd(nextCheckOut));
     }
 
     @Test
@@ -178,7 +183,8 @@ class HotelServiceTest {
         Hotel secondHotel = hotel(2L, "Marine Crest", "Mumbai", "12500.00", 5);
         given(hotelRepository.findByLocationContainingIgnoreCaseOrderByNameAsc("a"))
                 .willReturn(List.of(hotel, secondHotel));
-        given(roomInventoryRepository.findForStay(List.of(1L, 2L), CHECK_IN, CHECK_OUT))
+        given(roomInventoryRepository.findForHotelsInRange(
+                List.of(1L, 2L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT)))
                 .willReturn(List.of(
                         inventory(hotel, CHECK_IN, 5, 0),
                         inventory(hotel, CHECK_IN.plusDays(1), 5, 0),
@@ -191,11 +197,94 @@ class HotelServiceTest {
 
         assertThat(responses).hasSize(2);
         assertThat(responses).allMatch(HotelAvailabilityResponse.class::isInstance);
-        verify(roomInventoryRepository).findForStay(List.of(1L, 2L), CHECK_IN, CHECK_OUT);
+        verify(roomInventoryRepository).findForHotelsInRange(
+                List.of(1L, 2L), rangeStart(CHECK_IN), rangeEnd(CHECK_OUT));
+    }
+
+    @Test
+    void soldOutDatesSuggestThreeNearestAlternativesWithEarlierDateWinningTies() {
+        LocalDate requestedCheckIn = TODAY.plusDays(7);
+        LocalDate requestedCheckOut = requestedCheckIn.plusDays(2);
+        List<RoomInventory> inventory = inventoryRange(
+                requestedCheckIn, requestedCheckOut, requestedCheckIn, 2, List.of(), List.of());
+        given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
+        given(roomInventoryRepository.findForHotelsInRange(
+                List.of(1L), rangeStart(requestedCheckIn), rangeEnd(requestedCheckOut)))
+                .willReturn(inventory);
+
+        HotelDetailResponse response = hotelService.getHotel(1L, requestedCheckIn, requestedCheckOut);
+
+        assertThat(response.available()).isFalse();
+        assertThat(response.alternativeDates()).hasSize(3)
+                .extracting(alternative -> alternative.checkIn())
+                .containsExactly(requestedCheckIn.minusDays(2), requestedCheckIn.plusDays(2),
+                        requestedCheckIn.minusDays(3));
+        assertThat(response.alternativeDates()).allSatisfy(alternative -> {
+            assertThat(alternative.checkOut()).isEqualTo(alternative.checkIn().plusDays(2));
+            assertThat(alternative.nights()).isEqualTo(2);
+            assertThat(alternative.roomsLeft()).isEqualTo(5);
+            assertThat(alternative.totalAmount()).isEqualByComparingTo("16800.00");
+        });
+        verify(roomInventoryRepository).findForHotelsInRange(
+                List.of(1L), rangeStart(requestedCheckIn), rangeEnd(requestedCheckOut));
+    }
+
+    @Test
+    void excludesPastMissingAndFullCandidateNightsAndReturnsEmptyWhenNoneRemain() {
+        LocalDate requestedCheckIn = TODAY.plusDays(1);
+        LocalDate requestedCheckOut = requestedCheckIn.plusDays(2);
+        LocalDate rangeStart = rangeStart(requestedCheckIn);
+        LocalDate rangeEnd = rangeEnd(requestedCheckOut);
+        List<RoomInventory> rows = new java.util.ArrayList<>();
+        for (LocalDate date = rangeStart; date.isBefore(rangeEnd); date = date.plusDays(1)) {
+            if (date.equals(requestedCheckIn.plusDays(4))) {
+                continue;
+            }
+            int booked = date.isBefore(TODAY) || date.equals(TODAY) ? 0 : 5;
+            rows.add(inventory(hotel, date, 5, booked));
+        }
+        given(hotelRepository.findById(1L)).willReturn(Optional.of(hotel));
+        given(roomInventoryRepository.findForHotelsInRange(List.of(1L), rangeStart, rangeEnd))
+                .willReturn(rows);
+
+        HotelDetailResponse response = hotelService.getHotel(1L, requestedCheckIn, requestedCheckOut);
+
+        assertThat(response.alternativeDates()).isEmpty();
+        verify(roomInventoryRepository).findForHotelsInRange(List.of(1L), rangeStart, rangeEnd);
+    }
+
+    private List<RoomInventory> inventoryRange(
+            LocalDate requestedCheckIn,
+            LocalDate requestedCheckOut,
+            LocalDate fullStayCheckIn,
+            int fullStayNights,
+            List<LocalDate> missingDates,
+            List<LocalDate> fullDates) {
+        List<RoomInventory> rows = new java.util.ArrayList<>();
+        LocalDate rangeStart = rangeStart(requestedCheckIn);
+        LocalDate rangeEnd = rangeEnd(requestedCheckOut);
+        for (LocalDate date = rangeStart; date.isBefore(rangeEnd); date = date.plusDays(1)) {
+            if (missingDates.contains(date)) {
+                continue;
+            }
+            boolean requestedNight = !date.isBefore(fullStayCheckIn)
+                    && date.isBefore(fullStayCheckIn.plusDays(fullStayNights));
+            int booked = requestedNight || fullDates.contains(date) ? 5 : 0;
+            rows.add(inventory(hotel, date, 5, booked));
+        }
+        return rows;
     }
 
     private static Clock fixedClock() {
         return Clock.fixed(Instant.parse("2026-11-13T00:00:00Z"), ZoneId.of("Asia/Kolkata"));
+    }
+
+    private static LocalDate rangeStart(LocalDate checkIn) {
+        return checkIn.minusDays(7);
+    }
+
+    private static LocalDate rangeEnd(LocalDate checkOut) {
+        return checkOut.plusDays(7);
     }
 
     private static Hotel hotel(Long id, String name, String location, String nightlyPrice, int totalRooms) {

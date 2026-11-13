@@ -35,8 +35,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 6b | Create booking with row locking and reference generation | Backend | DONE |
 | 6c | Concurrency test and locking review | Backend | DONE |
 | 7 | Lookup + cancel (with tests) | Backend | DONE |
-| 8 | Surprise feature (backend) | Backend | CURRENT |
-| 9a | Frontend: hotel list + search | Frontend | UPCOMING |
+| 8 | Surprise feature (backend) | Backend | DONE |
+| 9a | Frontend: hotel list + search | Frontend | CURRENT |
 | 9b | Frontend: hotel details + price quote | Frontend | UPCOMING |
 | 9c | Frontend: booking form + confirmation | Frontend | UPCOMING |
 | 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | UPCOMING |
@@ -170,17 +170,17 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; service and controller tests pass (`mvn clean verify`); DB-backed cancellation integration test added and awaits the local MySQL run
 - Commits: `feat(booking): lookup booking by reference and email`, `feat(booking): cancel booking and release inventory`, `test(booking): lookup and cancel rules`
 
-### 8. Surprise feature (backend): CURRENT
+### 8. Surprise feature (backend): DONE
 **Goal:** see "Surprise feature" in AGENTS.md. Alternative dates when a search has no availability.
 - When the requested dates are sold out, the response also includes up to a few nearest check-in dates (same number of nights, within +/- 7 days) that have availability, plus price for each.
 - Reuse the existing availability logic. One service method, one extra response field.
 - 1-2 tests (suggestions appear only when sold out; suggested dates really are available).
 
 **Done when:** a sold-out search returns alternative dates in the JSON.
-- [ ] Acceptance met, tests pass
-- Commit: `feat(search): suggest alternative dates when sold out`
+- [x] Acceptance met; service and MVC tests cover nearest valid dates, bounds, pricing, and response fields (`mvn clean verify` passes)
+- Commits: `feat(search): suggest alternative dates when sold out`, `test(search): alternative date suggestions`
 
-### 9a. Frontend: hotel list + search: UPCOMING
+### 9a. Frontend: hotel list + search: CURRENT
 - React + Vite app in `/frontend`. API base URL from `VITE_API_BASE_URL`. Handle CORS on the backend if needed.
 - Hotel cards (name, location, amenities, price per night). Search by location + check-in/check-out with date validation messages.
 - Loading and error states.
@@ -258,3 +258,5 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Chunk 1 enabled Flyway baseline-on-migrate. With V1 present, a fresh empty database runs V1 as its first migration.
 
 **Concurrency approach (for DESIGN.md):** The race is two guests both observing the last room as free and both confirming it. The booking transaction takes pessimistic write locks on each affected inventory row in ascending date order before checking capacity, so the second guest waits and then sees the first guest's increment. The trade-off is that locks remain held for the transaction, though they affect only the selected hotel's booked dates; other hotels and dates remain available. An alternative is optimistic locking with a version column and retries after conflicts.
+
+**Surprise feature (for DESIGN.md):** When the requested stay is sold out, the API checks nearby check-in dates for the same stay length and suggests up to three available options. It uses one read-only inventory-range query and evaluates candidates in memory, with the nearest dates first. The search window is limited to seven days on either side, results are capped at three, and suggestions keep the requested stay length.

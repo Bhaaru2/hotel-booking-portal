@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.hotelbooking.dto.HotelResponse;
+import com.hotelbooking.dto.AlternativeDateResponse;
+import com.hotelbooking.dto.HotelAvailabilityResponse;
 import com.hotelbooking.service.HotelService;
 import com.hotelbooking.dto.HotelDetailResponse;
 import com.hotelbooking.exception.BadRequestException;
@@ -80,5 +82,33 @@ class HotelControllerTest {
                 .andExpect(jsonPath("$.message")
                         .value("Both check-in and check-out dates are required."))
                 .andExpect(jsonPath("$.fieldErrors").isArray());
+    }
+
+    @Test
+    void exposesAlternativeDatesOnSearchAndHotelDetails() throws Exception {
+        java.time.LocalDate requestedIn = java.time.LocalDate.of(2026, 11, 20);
+        java.time.LocalDate requestedOut = java.time.LocalDate.of(2026, 11, 22);
+        AlternativeDateResponse alternative = new AlternativeDateResponse(
+                java.time.LocalDate.of(2026, 11, 19), java.time.LocalDate.of(2026, 11, 21),
+                2, 1, new BigDecimal("16800.00"));
+        HotelAvailabilityResponse searchResult = new HotelAvailabilityResponse(
+                1L, "Coconut Grove House", "Goa", "A relaxed coastal retreat.",
+                List.of("Wi-Fi", "Garden"), new BigDecimal("8400.00"), requestedIn, requestedOut,
+                2, false, 0, new BigDecimal("16800.00"), List.of(alternative));
+        given(hotelService.searchHotels(null, requestedIn, requestedOut)).willReturn(List.of(searchResult));
+        mockMvc.perform(get("/api/hotels").param("checkIn", "2026-11-20").param("checkOut", "2026-11-22"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].alternativeDates[0].checkIn").value("2026-11-19"))
+                .andExpect(jsonPath("$[0].alternativeDates[0].nights").value(2));
+
+        given(hotelService.getHotel(eq(1L), eq(requestedIn), eq(requestedOut)))
+                .willReturn(new HotelDetailResponse(
+                        1L, "Coconut Grove House", "Goa", "A relaxed coastal retreat.",
+                        List.of("Wi-Fi", "Garden"), new BigDecimal("8400.00"), requestedIn, requestedOut,
+                        2, false, 0, new BigDecimal("16800.00"), List.of(alternative)));
+        mockMvc.perform(get("/api/hotels/1").param("checkIn", "2026-11-20").param("checkOut", "2026-11-22"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.alternativeDates[0].checkOut").value("2026-11-21"))
+                .andExpect(jsonPath("$.alternativeDates[0].totalAmount").value(16800.00));
     }
 }
