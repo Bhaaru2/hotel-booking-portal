@@ -43,3 +43,13 @@ export async function getHotels(params: HotelSearchParams = {}): Promise<HotelSu
   const queryString = query.toString()
   return request<HotelSummary[]>(`/hotels${queryString ? `?${queryString}` : ''}`)
 }
+
+export async function getHotel(id: number, params: HotelSearchParams = {}): Promise<HotelSummary> {
+  const query = new URLSearchParams()
+  if (params.checkIn && params.checkOut) {
+    query.set('checkIn', params.checkIn)
+    query.set('checkOut', params.checkOut)
+  }
+  const queryString = query.toString()
+  return request<HotelSummary>(`/hotels/${id}${queryString ? `?${queryString}` : ''}`)
+}

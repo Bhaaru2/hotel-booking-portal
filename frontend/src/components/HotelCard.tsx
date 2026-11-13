@@ -1,11 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { HotelSummary } from '../api/types'
-
-const inrFormatter = new Intl.NumberFormat('en-IN', {
-  style: 'currency',
-  currency: 'INR',
-  maximumFractionDigits: 0,
-})
+import { formatInr } from '../utils/currency'
 
 interface HotelCardProps {
   hotel: HotelSummary
@@ -45,9 +40,9 @@ export function HotelCard({ hotel, searchQuery }: HotelCardProps) {
 
       <div className="hotel-card-footer">
         <div className="price-block">
-          <p className="nightly-price">{inrFormatter.format(hotel.pricePerNight)} <span>/ night</span></p>
+          <p className="nightly-price">{formatInr(hotel.pricePerNight)} <span>/ night</span></p>
           {hasDates && hotel.nights !== undefined && hotel.totalAmount !== undefined && (
-            <p className="stay-total">{hotel.nights} {hotel.nights === 1 ? 'night' : 'nights'} · {inrFormatter.format(hotel.totalAmount)} total</p>
+            <p className="stay-total">{hotel.nights} {hotel.nights === 1 ? 'night' : 'nights'} · {formatInr(hotel.totalAmount)} total</p>
           )}
         </div>
         <Link className="button button-outline" to={detailsPath}>View details</Link>

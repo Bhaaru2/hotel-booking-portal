@@ -37,8 +37,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 7 | Lookup + cancel (with tests) | Backend | DONE |
 | 8 | Surprise feature (backend) | Backend | DONE |
 | 9a | Frontend: hotel list + search | Frontend | DONE |
-| 9b | Frontend: hotel details + price quote | Frontend | CURRENT |
-| 9c | Frontend: booking form + confirmation | Frontend | UPCOMING |
+| 9b | Frontend: hotel details + price quote | Frontend | DONE |
+| 9c | Frontend: booking form + confirmation | Frontend | CURRENT |
 | 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | UPCOMING |
 | 10 | README, DESIGN.md, screenshots, submission | Docs | UPCOMING |
 
@@ -189,13 +189,14 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
 - Commits: `feat(frontend): project setup, api client and routing`, `feat(frontend): hotel list and search`
 
-### 9b. Frontend: hotel details + price quote: CURRENT
+### 9b. Frontend: hotel details + price quote: DONE
 - Details page: description, amenities, availability for the chosen dates, and the total price (from the API, not calculated in the UI) before booking.
 
 **Done when:** selecting dates shows availability and the total for a hotel.
-- Commit: `feat(frontend): hotel details with price quote`
+- [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
+- Commits: `refactor(frontend): shared date validation helper`, `feat(frontend): hotel details page with price quote`
 
-### 9c. Frontend: booking form + confirmation: UPCOMING
+### 9c. Frontend: booking form + confirmation: CURRENT
 - Name + email form, inline validation messages, show total before confirming.
 - Confirmation screen with the booking reference. Show API error messages clearly (e.g. sold out).
 

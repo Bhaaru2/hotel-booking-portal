@@ -100,3 +100,53 @@ h1 { margin: 0; color: #243d38; font-size: clamp(2rem, 5vw, 3.25rem); line-heigh
   .hotel-card-footer { align-items: flex-start; }
   .error-panel { align-items: flex-start; flex-direction: column; }
 }
+
+.hotel-detail-page { max-width: 1080px; margin: 0 auto; }
+.back-link { display: inline-flex; margin-bottom: 24px; color: #58706a; font-size: 0.9rem; font-weight: 700; text-decoration: none; }
+.back-link:hover { color: #a34c36; }
+.detail-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr); align-items: start; gap: 34px; }
+.detail-main { padding: 34px; border: 1px solid #e8e7e2; border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgb(39 55 49 / 5%); }
+.detail-main h1 { font-size: clamp(2rem, 5vw, 3rem); }
+.detail-description { margin: 22px 0 32px; color: #65736f; font-size: 1.05rem; line-height: 1.75; }
+.detail-amenities { padding-top: 24px; border-top: 1px solid #edf0ec; }
+.detail-amenities h2, .detail-date-panel h2, .quote-panel h2, .availability-prompt h2 { margin: 0 0 16px; color: #243d38; font-size: 1.1rem; }
+.detail-amenities .amenity-list { margin-bottom: 0; }
+.detail-nightly-price { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #edf0ec; color: #66746f; }
+.detail-nightly-price strong { color: #243d38; font-size: 1.35rem; }
+.detail-sidebar { display: grid; gap: 16px; }
+.detail-date-panel, .quote-panel, .availability-prompt { padding: 23px; border: 1px solid #e8e7e2; border-radius: 16px; background: #fff; box-shadow: 0 9px 24px rgb(39 55 49 / 5%); }
+.detail-date-panel h2 { margin-bottom: 16px; }
+.detail-date-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.detail-date-fields .button { grid-column: 1 / -1; width: 100%; margin-top: 3px; }
+.quote-panel .eyebrow { margin-bottom: 7px; }
+.quote-panel h2 { margin-bottom: 18px; font-size: 1.35rem; }
+.quote-list { display: grid; gap: 11px; margin: 0; }
+.quote-list > div { display: flex; justify-content: space-between; gap: 16px; color: #66746f; font-size: 0.88rem; }
+.quote-list dt { margin: 0; }
+.quote-list dd { margin: 0; color: #344b45; font-weight: 650; text-align: right; }
+.price-math { margin: 18px 0; color: #687572; font-size: 0.85rem; }
+.quote-total { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 0; border-top: 1px solid #edf0ec; color: #344b45; font-weight: 700; }
+.quote-total strong { color: #243d38; font-size: 1.35rem; }
+.availability-result { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 16px; border-top: 1px solid #edf0ec; }
+.availability-result p { flex: 1 1 auto; margin: 0; color: #53645f; font-size: 0.88rem; font-weight: 650; }
+.book-button { width: 100%; margin-top: 6px; }
+.sold-out-message { color: #963f34 !important; }
+.button-disabled, .button-disabled:disabled { cursor: not-allowed; background: #ececea; color: #858d89; }
+.availability-prompt { padding: 28px 23px; }
+.availability-prompt h2 { margin: 10px 0 8px; }
+.availability-prompt p { margin: 0; color: #687572; font-size: 0.9rem; line-height: 1.55; }
+.prompt-icon { color: #a34c36; font-size: 1.4rem; }
+.booking-placeholder > p:not(.eyebrow) { margin: 10px 0; }
+
+@media (max-width: 800px) {
+  .detail-layout { grid-template-columns: 1fr; }
+  .detail-main { padding: 26px; }
+  .detail-sidebar { grid-row: 1; }
+}
+
+@media (max-width: 480px) {
+  .detail-main { padding: 22px 18px; }
+  .detail-date-panel, .quote-panel, .availability-prompt { padding: 19px; }
+  .detail-date-fields { grid-template-columns: 1fr; }
+  .detail-date-fields .button { grid-column: auto; }
+}
