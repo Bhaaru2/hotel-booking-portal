@@ -6,7 +6,7 @@ import { ErrorMessage } from '../components/ErrorMessage'
 import { HotelCard } from '../components/HotelCard'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { SearchForm } from '../components/SearchForm'
-import { validateDateRange } from '../utils/dateValidation'
+import { validateDateRange } from '../utils/dates'
 
 function selectedSearch(params: URLSearchParams): HotelSearchParams {
   return {

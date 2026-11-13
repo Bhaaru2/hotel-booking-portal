@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import type { HotelSearchParams } from '../api/types'
-import { localToday, validateDateRange } from '../utils/dateValidation'
+import { localToday, validateDateRange } from '../utils/dates'
 
 interface SearchFormProps {
   initialValues: HotelSearchParams
