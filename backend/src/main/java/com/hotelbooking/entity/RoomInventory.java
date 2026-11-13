@@ -61,4 +61,11 @@ public class RoomInventory {
     public void reserveOneRoom() {
         bookedRooms++;
     }
+
+    public void releaseOneRoom() {
+        if (bookedRooms <= 0) {
+            throw new IllegalStateException("Cannot release an unbooked room inventory unit.");
+        }
+        bookedRooms--;
+    }
 }

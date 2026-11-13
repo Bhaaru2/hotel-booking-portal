@@ -95,6 +95,33 @@ public class BookingService {
         return BookingResponse.from(booking);
     }
 
+    @Transactional
+    public BookingResponse cancelBooking(String reference, String email) {
+        Booking booking = bookingRepository.findForCancellation(
+                        normalizeReference(reference), normalizeEmail(email))
+                .orElseThrow(() -> new ResourceNotFoundException(BOOKING_NOT_FOUND_MESSAGE));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            return BookingResponse.from(booking).asAlreadyCancelled();
+        }
+        if (booking.getCheckIn().isBefore(java.time.LocalDate.now(clock))) {
+            throw new BadRequestException("Past bookings cannot be cancelled");
+        }
+
+        List<RoomInventory> inventory = roomInventoryRepository.findForStayForUpdate(
+                booking.getHotel().getId(), booking.getCheckIn(), booking.getCheckOut());
+        if (inventory.size() != booking.getNights()) {
+            throw new IllegalStateException("Inventory rows are missing for the booking being cancelled.");
+        }
+        if (inventory.stream().anyMatch(room -> room.getBookedRooms() <= 0)) {
+            throw new IllegalStateException("Inventory counts are inconsistent for the booking being cancelled.");
+        }
+
+        inventory.forEach(RoomInventory::releaseOneRoom);
+        booking.markCancelled();
+        return BookingResponse.from(bookingRepository.save(booking));
+    }
+
     private String normalizeReference(String reference) {
         return reference.trim().toUpperCase(Locale.ROOT);
     }

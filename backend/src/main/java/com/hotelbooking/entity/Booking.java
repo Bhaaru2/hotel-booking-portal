@@ -133,4 +133,8 @@ public class Booking {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public void markCancelled() {
+        status = BookingStatus.CANCELLED;
+    }
 }

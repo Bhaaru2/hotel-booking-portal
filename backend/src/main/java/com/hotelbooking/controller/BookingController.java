@@ -2,6 +2,7 @@ package com.hotelbooking.controller;
 
 import com.hotelbooking.dto.BookingRequest;
 import com.hotelbooking.dto.BookingResponse;
+import com.hotelbooking.dto.CancelBookingRequest;
 import com.hotelbooking.service.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,12 @@ public class BookingController {
             @PathVariable String reference,
             @RequestParam String email) {
         return bookingService.findBooking(reference, email);
+    }
+
+    @PostMapping("/{reference}/cancel")
+    public BookingResponse cancelBooking(
+            @PathVariable String reference,
+            @Valid @RequestBody CancelBookingRequest request) {
+        return bookingService.cancelBooking(reference, request.email());
     }
 }
