@@ -7,6 +7,7 @@ import { HotelSearchPage } from './pages/HotelSearchPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { HotelDetailsPage } from './pages/HotelDetailsPage'
 import { BookingPage } from './pages/BookingPage'
+import { BookingConfirmationPage } from './pages/BookingConfirmationPage'
 import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/" element={<HotelSearchPage />} />
           <Route path="/hotels/:id" element={<HotelDetailsPage />} />
           <Route path="/hotels/:id/book" element={<BookingPage />} />
+          <Route path="/booking/confirmed" element={<BookingConfirmationPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

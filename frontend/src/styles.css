@@ -184,3 +184,32 @@ h1 { margin: 0; color: #243d38; font-size: clamp(2rem, 5vw, 3.25rem); line-heigh
   .booking-layout { grid-template-columns: 1fr; }
   .booking-summary-card, .guest-form-panel { padding: 23px; }
 }
+
+.confirmation-page { max-width: 760px; margin: 0 auto; }
+.confirmation-heading { margin: 8px 0 25px; text-align: center; }
+.confirmation-heading .eyebrow { margin-top: 12px; }
+.confirmation-heading h1 { font-size: clamp(2rem, 5vw, 2.8rem); }
+.confirmation-check { display: inline-flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: #e4f2e9; color: #2e704c; font-size: 1.55rem; font-weight: 800; }
+.confirmation-card { padding: 28px; border: 1px solid #e8e7e2; border-radius: 18px; background: #fff; box-shadow: 0 12px 34px rgb(39 55 49 / 6%); }
+.reference-block { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 22px; border-bottom: 1px solid #edf0ec; }
+.reference-block .eyebrow { margin-bottom: 6px; }
+.booking-reference { margin: 0; color: #243d38; font-size: clamp(1.7rem, 5vw, 2.35rem); font-weight: 850; letter-spacing: 0.045em; }
+.copy-feedback { margin: 10px 0 0; color: #276148; font-size: 0.84rem; font-weight: 700; text-align: right; }
+.confirmation-details { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; margin: 8px 0 0; }
+.confirmation-details > div { display: flex; justify-content: space-between; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f0f1ed; }
+.confirmation-details dt, .confirmation-details dd { margin: 0; font-size: 0.88rem; }
+.confirmation-details dt { color: #72807b; }
+.confirmation-details dd { color: #344b45; font-weight: 650; text-align: right; overflow-wrap: anywhere; }
+.confirmation-status { display: inline-block; padding: 5px 8px; border-radius: 999px; background: #e7f3ec; color: #276148; font-size: 0.72rem; font-weight: 750; }
+.confirmation-note { margin: 22px 0; padding: 14px; border-radius: 10px; background: #f3f5f1; color: #596a64; font-size: 0.88rem; line-height: 1.55; }
+.confirmation-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.confirmation-missing { text-align: left; }
+.confirmation-missing .confirmation-actions { margin-top: 22px; }
+
+@media (max-width: 560px) {
+  .confirmation-card { padding: 21px 18px; }
+  .reference-block { align-items: flex-start; flex-direction: column; }
+  .copy-feedback { text-align: left; }
+  .confirmation-details { grid-template-columns: 1fr; }
+  .confirmation-actions { display: grid; grid-template-columns: 1fr; }
+}

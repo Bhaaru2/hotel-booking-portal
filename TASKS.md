@@ -38,8 +38,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 8 | Surprise feature (backend) | Backend | DONE |
 | 9a | Frontend: hotel list + search | Frontend | DONE |
 | 9b | Frontend: hotel details + price quote | Frontend | DONE |
-| 9c | Frontend: booking form + confirmation | Frontend | CURRENT |
-| 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | UPCOMING |
+| 9c | Frontend: booking form + confirmation | Frontend | DONE |
+| 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | CURRENT |
 | 10 | README, DESIGN.md, screenshots, submission | Docs | UPCOMING |
 
 ---
@@ -196,14 +196,15 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
 - Commits: `refactor(frontend): shared date validation helper`, `feat(frontend): hotel details page with price quote`
 
-### 9c. Frontend: booking form + confirmation: CURRENT
+### 9c. Frontend: booking form + confirmation: DONE
 - Name + email form, inline validation messages, show total before confirming.
 - Confirmation screen with the booking reference. Show API error messages clearly (e.g. sold out).
 
 **Done when:** you can book a room end to end in the browser.
-- Commit: `feat(frontend): booking form and confirmation`
+- [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
+- Commits: `feat(frontend): booking form with validation`, `feat(frontend): booking confirmation page`
 
-### 9d. Frontend: lookup/cancel + alternative dates UI: UPCOMING
+### 9d. Frontend: lookup/cancel + alternative dates UI: CURRENT
 - Retrieve a booking by reference + email, show details, cancel button with confirmation.
 - On sold-out searches, show the alternative-date suggestions as clickable options.
 
