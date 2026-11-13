@@ -170,7 +170,7 @@ TASKS.md                  Work chunks and progress
 
 ## Time spent
 
-Approximately TODO hours
+Approximately 11 hours
 
 ## AI tools disclosure
 

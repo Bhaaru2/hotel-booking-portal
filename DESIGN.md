@@ -164,5 +164,5 @@ In the verification run for this version, `mvn clean verify` reported 37 tests, 
 - Add room types, multi-room/guest counts, pagination and payments only if the product requires them.
 - Replace the fixed 120-day seed window with inventory management for later dates.
 - Run the gated concurrency and cancellation integration tests against a fresh local MySQL database and complete a fresh-clone setup test.
-- Add a screenshot showing sold-out alternatives and a small frontend test suite.
+- Add a small frontend test suite.
 - Add deployment configuration and operational logging/monitoring if the app were to be hosted.

@@ -47,7 +47,7 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 ## Where we are and what is still missing
 
 - **Done:** backend, frontend, tests, README and DESIGN.md are present. The backend build passed without database variables; its three MySQL integration cases were skipped. The frontend production build passed.
-- **Remaining manual work:** fill in the actual time spent, add any screenshots that are still missing, test from a fresh clone, run the MySQL-gated tests locally, and send the submission email.
+- **Remaining manual work:** test from a fresh clone, run the MySQL-gated tests locally, and send the submission email. Add any additional screenshots if new UI states need documenting.
 
 ---
 
@@ -267,7 +267,6 @@ Decisions (confirm or change, then keep consistent everywhere):
 
 ## Remaining manual steps
 
-- Replace `Approximately TODO hours` in README.md with the actual time spent.
-- Add any screenshots that are still missing (the five requested screenshots currently exist in `README/docs/`).
+- Add any additional screenshots if new UI states need documenting (the five requested screenshots currently exist in `README/docs/`).
 - Verify setup and commands from a fresh clone.
 - Run the DB-gated integration tests against the local MySQL database, then send the submission email with the required attachments and links.
