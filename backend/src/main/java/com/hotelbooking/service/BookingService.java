@@ -63,7 +63,7 @@ public class BookingService {
             throw new BadRequestException("Selected dates are outside the bookable window.");
         }
         if (inventory.stream().anyMatch(room -> room.getBookedRooms() >= room.getTotalRooms())) {
-            throw new ConflictException("No rooms available for the selected dates.");
+            throw new ConflictException("No rooms available for the selected dates");
         }
 
         inventory.forEach(RoomInventory::reserveOneRoom);

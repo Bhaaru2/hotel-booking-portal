@@ -32,8 +32,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | DONE |
 | 5 | Global error handler | Backend | DONE |
 | 6a | Date validation, availability and read-only price quote | Backend | DONE |
-| 6b | Create booking with row locking and reference generation | Backend | CURRENT |
-| 6c | Concurrency test and locking review | Backend | UPCOMING |
+| 6b | Create booking with row locking and reference generation | Backend | DONE |
+| 6c | Concurrency test and locking review | Backend | CURRENT |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
 | 9a | Frontend: hotel list + search | Frontend | UPCOMING |
@@ -139,7 +139,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; `mvn clean verify` and date, availability, quote, and response tests pass
 - Commit(s): `feat(booking): date validation and availability query`, `feat(booking): price quote on hotel details and search`, `test(booking): pricing and availability rules`
 
-### 6b. Create booking with row locking and reference generation: CURRENT
+### 6b. Create booking with row locking and reference generation: DONE
 **Goal:** create a confirmed booking safely using the validated dates and availability logic from 6a.
 - `POST /api/bookings` (hotelId, checkIn, checkOut, guestName, guestEmail): validates the guest name/email, hotel, dates and inventory range, then creates one booking.
 - **Concurrency:** one `@Transactional` method; lock affected `room_inventory` rows with `SELECT ... FOR UPDATE` (pessimistic write lock), ordered by date to avoid deadlocks; check capacity, increment `booked_rooms`, then insert the booking. Add a short comment explaining this.
@@ -147,10 +147,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Tests for booking creation, overlapping stays reducing capacity, and rejecting booking beyond capacity.
 
 **Done when:** a curl `POST /api/bookings` returns a confirmation with a reference, and a second booking for the same last room returns 409.
-- [ ] Acceptance met, tests pass
+- [x] Acceptance met; service and controller tests pass (`mvn clean verify`); live DB smoke test not run
 - Commit: `feat(booking): create booking with row locking`
 
-### 6c. Concurrency test and locking review: UPCOMING
+### 6c. Concurrency test and locking review: CURRENT
 **Goal:** verify and review the last-room concurrency behavior implemented in 6b.
 - Add a concurrency-focused test proving simultaneous attempts for the last room cannot both succeed.
 - Review lock ordering, transaction boundaries, inventory increments and unique booking reference handling.
