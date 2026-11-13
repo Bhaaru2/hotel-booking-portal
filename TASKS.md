@@ -40,16 +40,14 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 9b | Frontend: hotel details + price quote | Frontend | DONE |
 | 9c | Frontend: booking form + confirmation | Frontend | DONE |
 | 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | DONE |
-| 10 | README, DESIGN.md, screenshots, submission | Docs | CURRENT |
+| 10 | README, DESIGN.md, screenshots, submission | Docs | DONE |
 
 ---
 
 ## Where we are and what is still missing
 
-- **Done:** public GitHub repo exists, with AGENTS.md, README stub, `.gitignore`, `.env.example`. Local MySQL database `hotel_booking` and user `hotel_app` are set up. Java 21, Maven and Node are installed.
-- **Not started:** all application code (backend, frontend), tests, DESIGN.md, real README, screenshots.
-- **Biggest risk:** Chunk 6 (booking + concurrency + tests). It is graded hardest, so protect time for it.
-- **If time runs short:** cut frontend polish first. Never cut backend correctness, tests or DESIGN.md.
+- **Done:** backend, frontend, tests, README and DESIGN.md are present. The backend build passed without database variables; its three MySQL integration cases were skipped. The frontend production build passed.
+- **Remaining manual work:** fill in the actual time spent, add any screenshots that are still missing, test from a fresh clone, run the MySQL-gated tests locally, and send the submission email.
 
 ---
 
@@ -212,13 +210,15 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
 - Commits: `feat(frontend): find booking and cancel`, `feat(frontend): alternative dates suggestions`
 
-### 10. README, DESIGN.md, screenshots, submission: CURRENT
+### 10. README, DESIGN.md, screenshots, submission: DONE
 - README.md: prerequisites, DB setup, how to run backend and frontend, how to run tests, screenshots or demo recording, **approximate time spent**, unfinished items, **AI usage disclosure** (Codex used significantly).
 - DESIGN.md: architecture, database design, API design, booking logic, design decisions and trade-offs, simultaneous bookings (last-room problem and the locking approach), surprise feature, limitations and improvements.
 - Screenshots or short recording of the main flow in `/docs`.
 - Submission email to submission@tctours.in by 14 Nov 2026, 12:00 AM. Subject: `091126 Developer Internship Assessment : <Candidate Name>`. Include resume PDF (with college name), public GitHub link, and a brief write-up (approach, assumptions, challenges, future improvements).
 
-**Done when:** a fresh clone can be run by following only the README.
+**Done when:** README and DESIGN.md accurately describe the repository and include the local commands; fresh-clone verification and submission steps are tracked as manual work below.
+- [x] Documentation rewritten against the current migrations, backend, frontend and tests; `mvn clean verify` and `npm run build` pass
+- [x] The five requested screenshots currently present in `README/docs/` are embedded
 - Commit: `docs: readme, design doc and screenshots`
 
 ---
@@ -264,3 +264,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 **Concurrency approach (for DESIGN.md):** The race is two guests both observing the last room as free and both confirming it. The booking transaction takes pessimistic write locks on each affected inventory row in ascending date order before checking capacity, so the second guest waits and then sees the first guest's increment. The trade-off is that locks remain held for the transaction, though they affect only the selected hotel's booked dates; other hotels and dates remain available. An alternative is optimistic locking with a version column and retries after conflicts.
 
 **Surprise feature (for DESIGN.md):** When the requested stay is sold out, the API checks nearby check-in dates for the same stay length and suggests up to three available options. It uses one read-only inventory-range query and evaluates candidates in memory, with the nearest dates first. The search window is limited to seven days on either side, results are capped at three, and suggestions keep the requested stay length.
+
+## Remaining manual steps
+
+- Replace `Approximately TODO hours` in README.md with the actual time spent.
+- Add any screenshots that are still missing (the five requested screenshots currently exist in `README/docs/`).
+- Verify setup and commands from a fresh clone.
+- Run the DB-gated integration tests against the local MySQL database, then send the submission email with the required attachments and links.
