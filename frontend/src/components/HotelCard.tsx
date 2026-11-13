@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { HotelSummary } from '../api/types'
+import { AlternativeDates } from './AlternativeDates'
 import { formatInr } from '../utils/currency'
 
 interface HotelCardProps {
@@ -26,6 +27,10 @@ export function HotelCard({ hotel, searchQuery }: HotelCardProps) {
           <span className="availability-badge availability-sold-out">Sold out for these dates</span>
         )}
       </div>
+
+      {hasDates && hotel.available === false && hotel.alternativeDates && hotel.alternativeDates.length > 0 && (
+        <AlternativeDates hotelId={hotel.id} alternatives={hotel.alternativeDates} searchQuery={searchQuery} compact />
+      )}
 
       <div className="hotel-card-heading">
         <div>

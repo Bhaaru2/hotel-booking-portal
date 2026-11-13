@@ -39,8 +39,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 9a | Frontend: hotel list + search | Frontend | DONE |
 | 9b | Frontend: hotel details + price quote | Frontend | DONE |
 | 9c | Frontend: booking form + confirmation | Frontend | DONE |
-| 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | CURRENT |
-| 10 | README, DESIGN.md, screenshots, submission | Docs | UPCOMING |
+| 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | DONE |
+| 10 | README, DESIGN.md, screenshots, submission | Docs | CURRENT |
 
 ---
 
@@ -204,14 +204,15 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
 - Commits: `feat(frontend): booking form with validation`, `feat(frontend): booking confirmation page`
 
-### 9d. Frontend: lookup/cancel + alternative dates UI: CURRENT
-- Retrieve a booking by reference + email, show details, cancel button with confirmation.
-- On sold-out searches, show the alternative-date suggestions as clickable options.
+### 9d. Frontend: lookup/cancel + alternative dates UI: DONE
+- `/find-booking` retrieves a booking by normalized reference + email, shows its details, and supports cancellation with an inline confirmation. Lookup errors do not reveal whether the reference or email was wrong; past bookings cannot be cancelled.
+- Sold-out hotel details and search cards show up to three clickable same-length alternative date suggestions, with returned dates, availability, and totals. Selecting one updates the stay dates and refreshes hotel availability.
 
-**Done when:** you can look up and cancel a booking, and clicking a suggested date re-runs the search.
-- Commit: `feat(frontend): lookup, cancel and alternative dates`
+**Done when:** you can look up and cancel a booking, and selecting a suggested date reloads the hotel with that date range.
+- [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
+- Commits: `feat(frontend): find booking and cancel`, `feat(frontend): alternative dates suggestions`
 
-### 10. README, DESIGN.md, screenshots, submission: UPCOMING
+### 10. README, DESIGN.md, screenshots, submission: CURRENT
 - README.md: prerequisites, DB setup, how to run backend and frontend, how to run tests, screenshots or demo recording, **approximate time spent**, unfinished items, **AI usage disclosure** (Codex used significantly).
 - DESIGN.md: architecture, database design, API design, booking logic, design decisions and trade-offs, simultaneous bookings (last-room problem and the locking approach), surprise feature, limitations and improvements.
 - Screenshots or short recording of the main flow in `/docs`.

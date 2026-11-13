@@ -4,6 +4,7 @@ import { ApiError } from '../api/ApiError'
 import { getHotel } from '../api/client'
 import type { HotelSearchParams, HotelSummary } from '../api/types'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { AlternativeDates } from '../components/AlternativeDates'
 import { HotelDateForm } from '../components/HotelDateForm'
 import { HotelNotFound } from '../components/HotelNotFound'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -153,6 +154,11 @@ export function HotelDetailsPage() {
               ) : (
                 <div className="availability-result">
                   <p className="sold-out-message">Sold out for these dates</p>
+                  {hotel.alternativeDates && hotel.alternativeDates.length > 0 ? (
+                    <AlternativeDates hotelId={hotel.id} alternatives={hotel.alternativeDates} searchQuery={queryString} />
+                  ) : (
+                    <p className="no-alternative-dates">No nearby dates available. Try different dates.</p>
+                  )}
                   <button className="button button-disabled book-button" type="button" disabled>Book now</button>
                 </div>
               )}

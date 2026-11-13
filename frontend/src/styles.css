@@ -86,6 +86,18 @@ h1 { margin: 0; color: #243d38; font-size: clamp(2rem, 5vw, 3.25rem); line-heigh
 .error-panel p { margin: 0; color: #73463f; line-height: 1.5; }
 .api-field-errors { margin: 10px 0 0; padding-left: 20px; color: #73463f; font-size: 0.88rem; }
 .empty-state { padding: 36px 20px; border: 1px dashed #cfd8d3; border-radius: 14px; color: #687572; text-align: center; }
+.alternative-dates { flex: 1 1 100%; width: 100%; margin-top: 8px; }
+.alternative-dates h3 { margin: 0 0 9px; color: #52615d; font-size: .84rem; }
+.alternative-dates ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.alternative-date-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px; border: 1px solid #dce8df; border-radius: 10px; background: #f7fbf8; color: #53645f; font-size: .8rem; text-decoration: none; }
+.alternative-date-link:hover { border-color: #83aa91; background: #eff7f1; }
+.alternative-date-link:focus-visible { outline: 3px solid #db9b80; outline-offset: 2px; }
+.alternative-date-range, .alternative-date-link strong { color: #243d38; font-weight: 750; }
+.alternative-dates-compact { margin: 5px 0 10px; }
+.alternative-dates-compact h3 { margin-bottom: 6px; font-size: .76rem; }
+.alternative-dates-compact .alternative-date-link { flex-wrap: wrap; justify-content: flex-start; padding: 8px 9px; font-size: .72rem; }
+.alternative-dates-compact .alternative-date-link strong { margin-left: auto; }
+.no-alternative-dates { flex: 1 1 100% !important; color: #687572 !important; font-size: .84rem !important; font-weight: 500 !important; }
 
 @media (max-width: 900px) {
   .search-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -99,6 +111,8 @@ h1 { margin: 0; color: #243d38; font-size: clamp(2rem, 5vw, 3.25rem); line-heigh
   .hotel-card { padding: 18px; }
   .hotel-card-footer { align-items: flex-start; }
   .error-panel { align-items: flex-start; flex-direction: column; }
+  .alternative-date-link { flex-wrap: wrap; justify-content: flex-start; }
+  .alternative-date-link strong { margin-left: auto; }
 }
 
 .hotel-detail-page { max-width: 1080px; margin: 0 auto; }
