@@ -170,7 +170,7 @@ TASKS.md                  Work chunks and progress
 
 ## Time spent
 
-Approximately 28 hours
+Approximately 20 hours
 
 ## AI tools disclosure
 
