@@ -30,8 +30,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 2 | V1 migration: tables | Backend | DONE |
 | 3 | V2 migration: seed data | Backend | DONE |
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | DONE |
-| 5 | Global error handler | Backend | CURRENT |
-| 6 | Quote + create booking (locking + tests) | Backend | UPCOMING |
+| 5 | Global error handler | Backend | DONE |
+| 6 | Quote + create booking (locking + tests) | Backend | CURRENT |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
 | 9a | Frontend: hotel list + search | Frontend | UPCOMING |
@@ -112,7 +112,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; `mvn clean verify` and the controller JSON-shape test pass
 - Commit: `feat(api): list and filter hotels`
 
-### 5. Global error handler: CURRENT
+### 5. Global error handler: DONE
 **Goal:** every failure returns the same JSON shape.
 - `@RestControllerAdvice` returning `{ timestamp, status, error, message, path, fieldErrors[] }`.
 - Handle: validation errors (400, with `fieldErrors`), not found (404), conflict / no availability (409), unexpected errors (500, generic message, no stack trace leaked).
@@ -120,10 +120,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Add one test proving the format.
 
 **Done when:** a bad request returns the standard error JSON with the right HTTP status.
-- [ ] Acceptance met, test passes
+- [x] Acceptance met; MVC tests cover validation, malformed input, custom errors, unknown URLs, and generic failures
 - Commit: `feat(api): consistent error responses`
 
-### 6. Quote + create booking (locking + tests): UPCOMING (highest priority chunk)
+### 6. Quote + create booking (locking + tests): CURRENT (highest priority chunk)
 **Goal:** the core booking flow, done correctly.
 - `GET /api/hotels/{id}?checkIn=&checkOut=`: hotel details plus availability for the dates and the price quote (nights x price per night).
 - `GET /api/hotels?location=&checkIn=&checkOut=`: search also reports availability for the dates.
