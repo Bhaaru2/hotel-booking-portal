@@ -170,11 +170,11 @@ TASKS.md                  Work chunks and progress
 
 ## Time spent
 
-Approximately 11 hours
+Approximately 28 hours
 
 ## AI tools disclosure
 
-I built this project with heavy use of an AI coding tool (Codex), working in small steps tracked in TASKS.md. I chose the design decisions (per-night inventory, row locking, lookup by reference + email), ran and checked every step myself against the database and the browser, and reviewed the code. I can explain any part of it.
+I built this project with use of an AI coding tool, working in small steps tracked in TASKS.md. I chose the design decisions (per-night inventory, row locking, lookup by reference + email), ran and checked every step myself against the database and the browser, and reviewed the code. I can explain any part of it.
 
 ## Known limitations and unfinished items
 
