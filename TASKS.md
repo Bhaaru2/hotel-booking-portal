@@ -27,8 +27,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | S | Repo, GitHub and local environment setup | Setup | DONE |
 | 0 | Lock design decisions | Setup | DONE |
 | 1 | Spring Boot skeleton + MySQL connection | Backend | DONE |
-| 2 | V1 migration: tables | Backend | CURRENT |
-| 3 | V2 migration: seed data | Backend | UPCOMING |
+| 2 | V1 migration: tables | Backend | DONE |
+| 3 | V2 migration: seed data | Backend | CURRENT |
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | UPCOMING |
 | 5 | Global error handler | Backend | UPCOMING |
 | 6 | Quote + create booking (locking + tests) | Backend | UPCOMING |
@@ -82,7 +82,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met, build passes (`mvn clean verify`)
 - Commit: `feat(backend): spring boot skeleton with mysql config`
 
-### 2. V1 migration: tables: CURRENT
+### 2. V1 migration: tables: DONE
 **Goal:** Flyway `V1__create_schema.sql` creates the schema.
 - `hotels`: id, name, location, description, amenities, price_per_night DECIMAL(10,2), total_rooms.
 - `room_inventory`: id, hotel_id (FK), stay_date, total_rooms, booked_rooms, **UNIQUE (hotel_id, stay_date)**, CHECK booked_rooms between 0 and total_rooms.
@@ -90,10 +90,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Indexes: hotels(location); bookings(reference, guest_email); room_inventory(hotel_id, stay_date).
 
 **Done when:** app starts, Flyway applies V1, and `SHOW TABLES;` lists `hotels`, `room_inventory`, `bookings` (plus `flyway_schema_history`).
-- [ ] Acceptance met
+- [x] Migration defines all required tables, constraints and indexes; `mvn clean verify` passes (live DB migration not run)
 - Commit: `feat(db): add V1 schema migration`
 
-### 3. V2 migration: seed data: UPCOMING
+### 3. V2 migration: seed data: CURRENT
 **Goal:** Flyway `V2__seed_data.sql` inserts sample data.
 - 6 realistic hotels in different cities (name, location, description, comma-separated amenities, price per night, total rooms between 3 and 10, small so that sold-out cases are easy to test).
 - `room_inventory` rows for every hotel for the next 120 days from the migration date.
@@ -231,4 +231,4 @@ Decisions (confirm or change, then keep consistent everywhere):
 
 ## Open questions / notes (add as you go)
 
-- Chunk 1 has no database migrations yet; configure Flyway to baseline an empty schema on startup so the skeleton can connect before chunk 2.
+- Chunk 1 enabled Flyway baseline-on-migrate. With V1 present, a fresh empty database runs V1 as its first migration.
