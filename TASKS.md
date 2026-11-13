@@ -31,8 +31,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 3 | V2 migration: seed data | Backend | DONE |
 | 4 | Entities, repositories, `GET /api/hotels` | Backend | DONE |
 | 5 | Global error handler | Backend | DONE |
-| 6a | Date validation, availability and read-only price quote | Backend | CURRENT |
-| 6b | Create booking with row locking and reference generation | Backend | UPCOMING |
+| 6a | Date validation, availability and read-only price quote | Backend | DONE |
+| 6b | Create booking with row locking and reference generation | Backend | CURRENT |
 | 6c | Concurrency test and locking review | Backend | UPCOMING |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
@@ -125,7 +125,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; MVC tests cover validation, malformed input, custom errors, unknown URLs, and generic failures
 - Commit: `feat(api): consistent error responses`
 
-### 6a. Dates, availability and read-only price quote: CURRENT
+### 6a. Dates, availability and read-only price quote: DONE
 **Goal:** validate requested stay dates, report per-night availability, and quote totals without creating bookings.
 - Provide a `Clock` bean using the `Asia/Kolkata` zone so date rules can be tested deterministically.
 - **Validation:** check-out after check-in; check-in cannot be in the past (today is allowed); maximum stay is 30 nights; all occupied nights must exist in seeded inventory, otherwise return a clear 400 error.
@@ -136,10 +136,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - **Tests:** price calculation; invalid date order, past check-in and stays over 30 nights; one date missing; availability across nights; minimum rooms left; back-to-back stays.
 
 **Done when:** quote and availability endpoints pass the required tests and `mvn clean verify` passes.
-- [ ] Acceptance met, tests pass
+- [x] Acceptance met; `mvn clean verify` and date, availability, quote, and response tests pass
 - Commit(s): `feat(booking): date validation and availability query`, `feat(booking): price quote on hotel details and search`, `test(booking): pricing and availability rules`
 
-### 6b. Create booking with row locking and reference generation: UPCOMING
+### 6b. Create booking with row locking and reference generation: CURRENT
 **Goal:** create a confirmed booking safely using the validated dates and availability logic from 6a.
 - `POST /api/bookings` (hotelId, checkIn, checkOut, guestName, guestEmail): validates the guest name/email, hotel, dates and inventory range, then creates one booking.
 - **Concurrency:** one `@Transactional` method; lock affected `room_inventory` rows with `SELECT ... FOR UPDATE` (pessimistic write lock), ordered by date to avoid deadlocks; check capacity, increment `booked_rooms`, then insert the booking. Add a short comment explaining this.

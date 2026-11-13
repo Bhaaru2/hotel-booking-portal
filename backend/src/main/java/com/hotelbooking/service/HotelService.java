@@ -59,6 +59,9 @@ public class HotelService {
 
     @Transactional(readOnly = true)
     public HotelDetailResponse getHotel(Long hotelId, LocalDate checkIn, LocalDate checkOut) {
+        if ((checkIn == null) != (checkOut == null)) {
+            stayDateValidator.validate(checkIn, checkOut);
+        }
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new com.hotelbooking.exception.ResourceNotFoundException(
                         "Hotel " + hotelId + " was not found."));

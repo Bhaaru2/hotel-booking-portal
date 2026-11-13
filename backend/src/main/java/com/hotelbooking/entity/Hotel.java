@@ -35,7 +35,7 @@ public class Hotel {
     @Column(name = "total_rooms", nullable = false)
     private Integer totalRooms;
 
-    protected Hotel() {
+    public Hotel() {
     }
 
     public Long getId() {

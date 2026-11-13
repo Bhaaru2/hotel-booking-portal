@@ -39,7 +39,7 @@ public class RoomInventory {
     @Column(name = "booked_rooms", nullable = false)
     private Integer bookedRooms;
 
-    protected RoomInventory() {
+    public RoomInventory() {
     }
 
     public Long getHotelId() {
