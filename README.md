@@ -11,3 +11,15 @@ mvn spring-boot:run
 ```
 
 The backend uses Flyway for schema changes and Hibernate `validate` to check the schema. Before the first migration is added, Flyway starts normally against an empty database; baseline-on-migrate is enabled for an existing non-empty schema.
+
+## Running the frontend
+
+Prerequisites: Node.js and npm, plus the backend running on port 8080. From the repository root:
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+Open <http://localhost:5173>. During local development, Vite proxies `/api` requests to `http://localhost:8080`. `VITE_API_BASE_URL` is optional; set it only when the API is hosted at another base URL.
