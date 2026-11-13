@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.hotelbooking.dto.BookingRequest;
 import com.hotelbooking.dto.BookingResponse;
 import com.hotelbooking.exception.ConflictException;
+import com.hotelbooking.entity.BookingStatus;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -140,6 +141,65 @@ class BookingConcurrencyTest {
 
         assertThat(outcomes).allMatch(Outcome::succeeded);
         assertThat(bookedRoomsByDate()).containsExactlyInAnyOrderEntriesOf(expectedCounts(requests, outcomes));
+    }
+
+    @Test
+    void cancellationReleasesRoomsOnceEvenWhenCancelledConcurrently() throws Exception {
+        LocalDate checkIn = firstInventoryDate;
+        LocalDate checkOut = checkIn.plusDays(3);
+        List<BookingResponse> initialBookings = new ArrayList<>();
+        for (int guest = 0; guest < TEST_ROOM_COUNT; guest++) {
+            initialBookings.add(bookingService.createBooking(request(guest, checkIn, checkOut, "cancel")));
+        }
+
+        BookingResponse cancelled = bookingService.cancelBooking(
+                initialBookings.get(0).reference(), initialBookings.get(0).guestEmail());
+        assertThat(cancelled.status()).isEqualTo(BookingStatus.CANCELLED);
+        assertThat(bookedRoomsByDate()).containsEntry(checkIn, 2)
+                .containsEntry(checkIn.plusDays(1), 2)
+                .containsEntry(checkIn.plusDays(2), 2);
+
+        BookingResponse replacement = bookingService.createBooking(request(4, checkIn, checkOut, "replacement"));
+        assertThat(bookedRoomsByDate()).containsEntry(checkIn, 3)
+                .containsEntry(checkIn.plusDays(1), 3)
+                .containsEntry(checkIn.plusDays(2), 3);
+
+        // Two cancellation requests for one booking must not release the same room twice.
+        List<BookingResponse> concurrentCancels = runCancelsTogether(replacement);
+        assertThat(concurrentCancels).allMatch(response -> response.status() == BookingStatus.CANCELLED);
+        assertThat(concurrentCancels).extracting(BookingResponse::alreadyCancelled)
+                .containsExactlyInAnyOrder(null, true);
+        assertThat(bookedRoomsByDate()).containsEntry(checkIn, 2)
+                .containsEntry(checkIn.plusDays(1), 2)
+                .containsEntry(checkIn.plusDays(2), 2)
+                .containsEntry(checkIn.plusDays(3), 0)
+                .containsEntry(checkIn.plusDays(4), 0);
+    }
+
+    private List<BookingResponse> runCancelsTogether(BookingResponse booking) throws Exception {
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<BookingResponse>> futures = new ArrayList<>();
+        for (int thread = 0; thread < 2; thread++) {
+            futures.add(executor.submit(() -> {
+                ready.countDown();
+                if (!start.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException("Timed out waiting for concurrent cancellation start.");
+                }
+                return bookingService.cancelBooking(booking.reference(), booking.guestEmail());
+            }));
+        }
+        assertThat(ready.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
+        start.countDown();
+        return futures.stream().map(this::getCancelWithinTimeout).toList();
+    }
+
+    private BookingResponse getCancelWithinTimeout(Future<BookingResponse> future) {
+        try {
+            return future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (Exception failure) {
+            throw new AssertionError("Concurrent cancellation did not finish successfully.", failure);
+        }
     }
 
     private List<Outcome> runTogether(List<BookingRequest> requests) throws Exception {

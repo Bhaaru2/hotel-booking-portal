@@ -34,8 +34,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 6a | Date validation, availability and read-only price quote | Backend | DONE |
 | 6b | Create booking with row locking and reference generation | Backend | DONE |
 | 6c | Concurrency test and locking review | Backend | DONE |
-| 7 | Lookup + cancel (with tests) | Backend | CURRENT |
-| 8 | Surprise feature (backend) | Backend | UPCOMING |
+| 7 | Lookup + cancel (with tests) | Backend | DONE |
+| 8 | Surprise feature (backend) | Backend | CURRENT |
 | 9a | Frontend: hotel list + search | Frontend | UPCOMING |
 | 9b | Frontend: hotel details + price quote | Frontend | UPCOMING |
 | 9c | Frontend: booking form + confirmation | Frontend | UPCOMING |
@@ -159,7 +159,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] DB-backed concurrency tests added; clean verify passes without DB variables (DB-enabled run must be performed against the local MySQL)
 - Commit: `test(booking): concurrent booking integration test`
 
-### 7. Lookup + cancel (with tests): CURRENT
+### 7. Lookup + cancel (with tests): DONE
 **Goal:** retrieve and cancel a booking.
 - `GET /api/bookings/{reference}?email=`: returns the booking. Wrong reference or wrong email: 404.
 - `POST /api/bookings/{reference}/cancel` (email in body): sets status CANCELLED and decrements `booked_rooms` for each night in one transaction (same locking approach).
@@ -167,10 +167,10 @@ Decisions (confirm or change, then keep consistent everywhere):
 - **Tests:** cancellation releases availability; double cancel is safe; wrong email is rejected.
 
 **Done when:** book, cancel, then the same dates are bookable again.
-- [ ] Acceptance met, tests pass
-- Commit: `feat(booking): lookup and cancel with inventory release`
+- [x] Acceptance met; service and controller tests pass (`mvn clean verify`); DB-backed cancellation integration test added and awaits the local MySQL run
+- Commits: `feat(booking): lookup booking by reference and email`, `feat(booking): cancel booking and release inventory`, `test(booking): lookup and cancel rules`
 
-### 8. Surprise feature (backend): UPCOMING
+### 8. Surprise feature (backend): CURRENT
 **Goal:** see "Surprise feature" in AGENTS.md. Alternative dates when a search has no availability.
 - When the requested dates are sold out, the response also includes up to a few nearest check-in dates (same number of nights, within +/- 7 days) that have availability, plus price for each.
 - Reuse the existing availability logic. One service method, one extra response field.
@@ -251,6 +251,7 @@ Decisions (confirm or change, then keep consistent everywhere):
 - Inventory window starts at the migration date and covers 120 consecutive days.
 - Maximum stay is 30 nights.
 - “Today” for booking date validation uses the `Asia/Kolkata` time zone.
+- A booking with check-in before today cannot be cancelled; a booking checking in today remains cancellable.
 
 ## Open questions / notes (add as you go)
 
