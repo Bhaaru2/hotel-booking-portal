@@ -61,9 +61,76 @@ public class Booking {
     @Column(nullable = false, length = 10)
     private BookingStatus status;
 
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     protected Booking() {
+    }
+
+    public Booking(
+            String reference,
+            Hotel hotel,
+            String guestName,
+            String guestEmail,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            int nights,
+            BigDecimal totalAmount,
+            BookingStatus status,
+            LocalDateTime createdAt) {
+        this.reference = reference;
+        this.hotel = hotel;
+        this.guestName = guestName;
+        this.guestEmail = guestEmail;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.nights = nights;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
+    }
+
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public String getGuestEmail() {
+        return guestEmail;
+    }
+
+    public LocalDate getCheckIn() {
+        return checkIn;
+    }
+
+    public LocalDate getCheckOut() {
+        return checkOut;
+    }
+
+    public Integer getNights() {
+        return nights;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

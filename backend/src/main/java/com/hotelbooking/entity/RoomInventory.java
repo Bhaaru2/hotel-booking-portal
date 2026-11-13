@@ -57,4 +57,8 @@ public class RoomInventory {
     public Integer getBookedRooms() {
         return bookedRooms;
     }
+
+    public void reserveOneRoom() {
+        bookedRooms++;
+    }
 }
