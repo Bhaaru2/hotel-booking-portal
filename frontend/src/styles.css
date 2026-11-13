@@ -150,3 +150,37 @@ h1 { margin: 0; color: #243d38; font-size: clamp(2rem, 5vw, 3.25rem); line-heigh
   .detail-date-fields { grid-template-columns: 1fr; }
   .detail-date-fields .button { grid-column: auto; }
 }
+
+.booking-page { max-width: 1000px; margin: 0 auto; }
+.booking-layout { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: start; gap: 22px; }
+.booking-summary-card, .guest-form-panel { padding: 28px; border: 1px solid #e8e7e2; border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgb(39 55 49 / 5%); }
+.booking-summary-card h1 { font-size: clamp(1.7rem, 4vw, 2.35rem); }
+.booking-location { margin: 10px 0 24px; color: #687572; }
+.booking-summary-list { display: grid; gap: 13px; margin: 0; }
+.booking-summary-list > div { display: flex; justify-content: space-between; gap: 16px; color: #687572; font-size: 0.9rem; }
+.booking-summary-list dt, .booking-summary-list dd { margin: 0; }
+.booking-summary-list dd { color: #344b45; font-weight: 650; text-align: right; }
+.booking-total, .confirm-total { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 20px; border-top: 1px solid #edf0ec; color: #344b45; font-weight: 750; }
+.booking-total { margin-top: 24px; }
+.booking-total strong, .confirm-total strong { color: #243d38; font-size: 1.45rem; }
+.guest-form-panel h2 { margin: 0 0 23px; color: #243d38; font-size: 1.55rem; }
+.guest-form { display: grid; gap: 20px; }
+.guest-form .field-group input { min-height: 50px; }
+.guest-form .field-group input[aria-invalid="true"] { border-color: #bd5947; }
+.guest-form .field-error { display: block; margin: 0; font-size: 0.82rem; }
+.confirm-total { padding-top: 16px; }
+.confirm-total strong { font-size: 1.3rem; }
+.confirm-button { width: 100%; min-height: 50px; }
+.confirm-button:disabled { cursor: wait; background: #9a786d; }
+.booking-error-banner { display: grid; gap: 12px; margin-bottom: 20px; padding: 15px; border: 1px solid #efc4ba; border-radius: 12px; background: #fff7f5; color: #823a30; }
+.booking-error-banner p { margin: 0; line-height: 1.5; }
+.booking-error-banner .button { justify-self: start; }
+.booking-error-sold-out { border-color: #efc4ba; background: #fff4f1; }
+.booking-guard .field-error { margin: 16px 0; }
+.booking-guard .button { margin-top: 8px; }
+.booking-load-error { max-width: 760px; margin: 20px auto; }
+
+@media (max-width: 760px) {
+  .booking-layout { grid-template-columns: 1fr; }
+  .booking-summary-card, .guest-form-panel { padding: 23px; }
+}

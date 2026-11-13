@@ -41,3 +41,28 @@ export interface HotelSearchParams {
   checkIn?: string
   checkOut?: string
 }
+
+export interface BookingRequest {
+  hotelId: number
+  checkIn: string
+  checkOut: string
+  guestName: string
+  guestEmail: string
+}
+
+export type BookingStatus = 'CONFIRMED' | 'CANCELLED'
+
+export interface BookingResponse {
+  reference: string
+  hotelId: number
+  hotelName: string
+  guestName: string
+  guestEmail: string
+  checkIn: string
+  checkOut: string
+  nights: number
+  totalAmount: number
+  status: BookingStatus
+  createdAt: string
+  alreadyCancelled?: boolean
+}

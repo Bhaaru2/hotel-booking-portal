@@ -1,5 +1,5 @@
 import { ApiError } from './ApiError'
-import type { ApiErrorResponse, HotelSearchParams, HotelSummary } from './types'
+import type { ApiErrorResponse, BookingRequest, BookingResponse, HotelSearchParams, HotelSummary } from './types'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '')
 
@@ -10,10 +10,10 @@ function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
   return typeof body.message === 'string'
 }
 
-async function request<T>(path: string): Promise<T> {
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
   try {
-    response = await fetch(`${API_BASE_URL}${path}`)
+    response = await fetch(`${API_BASE_URL}${path}`, init)
   } catch {
     throw new ApiError('Unable to reach the hotel service. Please try again.')
   }
@@ -52,4 +52,12 @@ export async function getHotel(id: number, params: HotelSearchParams = {}): Prom
   }
   const queryString = query.toString()
   return request<HotelSummary>(`/hotels/${id}${queryString ? `?${queryString}` : ''}`)
+}
+
+export async function createBooking(payload: BookingRequest): Promise<BookingResponse> {
+  return request<BookingResponse>('/bookings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
 }

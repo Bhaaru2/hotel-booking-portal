@@ -5,6 +5,7 @@ import { getHotel } from '../api/client'
 import type { HotelSearchParams, HotelSummary } from '../api/types'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { HotelDateForm } from '../components/HotelDateForm'
+import { HotelNotFound } from '../components/HotelNotFound'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { formatInr } from '../utils/currency'
 import { validateDateRange } from '../utils/dates'
@@ -80,14 +81,7 @@ export function HotelDetailsPage() {
   }
 
   if (notFound) {
-    return (
-      <section className="message-panel">
-        <p className="eyebrow">Hotel unavailable</p>
-        <h1>Hotel not found</h1>
-        <p>We couldn’t find a hotel with that ID.</p>
-        <Link className="text-link" to={backToResults(searchParams)}>Back to results</Link>
-      </section>
-    )
+    return <HotelNotFound backTo={backToResults(searchParams)} />
   }
 
   if (loading) return <LoadingSpinner />
