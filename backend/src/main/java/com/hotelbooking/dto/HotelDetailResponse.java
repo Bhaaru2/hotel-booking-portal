@@ -19,13 +19,31 @@ public record HotelDetailResponse(
         Integer nights,
         Boolean available,
         Integer roomsLeft,
-        BigDecimal totalAmount) {
+        BigDecimal totalAmount,
+        List<AlternativeDateResponse> alternativeDates) {
+
+    public HotelDetailResponse(
+            Long id,
+            String name,
+            String location,
+            String description,
+            List<String> amenities,
+            BigDecimal pricePerNight,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            Integer nights,
+            Boolean available,
+            Integer roomsLeft,
+            BigDecimal totalAmount) {
+        this(id, name, location, description, amenities, pricePerNight, checkIn, checkOut,
+                nights, available, roomsLeft, totalAmount, null);
+    }
 
     public static HotelDetailResponse detailsOnly(Hotel hotel) {
         HotelResponse details = HotelResponse.from(hotel);
         return new HotelDetailResponse(
                 details.id(), details.name(), details.location(), details.description(),
-                details.amenities(), details.pricePerNight(), null, null, null, null, null, null);
+                details.amenities(), details.pricePerNight(), null, null, null, null, null, null, null);
     }
 
     public static HotelDetailResponse withAvailability(
@@ -35,11 +53,12 @@ public record HotelDetailResponse(
             int nights,
             boolean available,
             int roomsLeft,
-            BigDecimal totalAmount) {
+            BigDecimal totalAmount,
+            List<AlternativeDateResponse> alternativeDates) {
         HotelResponse details = HotelResponse.from(hotel);
         return new HotelDetailResponse(
                 details.id(), details.name(), details.location(), details.description(),
                 details.amenities(), details.pricePerNight(), checkIn, checkOut, nights,
-                available, roomsLeft, totalAmount);
+                available, roomsLeft, totalAmount, alternativeDates);
     }
 }

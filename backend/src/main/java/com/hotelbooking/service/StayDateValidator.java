@@ -34,4 +34,8 @@ public class StayDateValidator {
         }
         return Math.toIntExact(nights);
     }
+
+    public LocalDate today() {
+        return LocalDate.now(clock);
+    }
 }

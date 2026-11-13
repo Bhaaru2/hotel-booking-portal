@@ -17,7 +17,25 @@ public record HotelAvailabilityResponse(
         int nights,
         boolean available,
         int roomsLeft,
-        BigDecimal totalAmount) {
+        BigDecimal totalAmount,
+        List<AlternativeDateResponse> alternativeDates) {
+
+    public HotelAvailabilityResponse(
+            Long id,
+            String name,
+            String location,
+            String description,
+            List<String> amenities,
+            BigDecimal pricePerNight,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            int nights,
+            boolean available,
+            int roomsLeft,
+            BigDecimal totalAmount) {
+        this(id, name, location, description, amenities, pricePerNight, checkIn, checkOut,
+                nights, available, roomsLeft, totalAmount, List.of());
+    }
 
     public static HotelAvailabilityResponse from(
             Hotel hotel,
@@ -26,7 +44,8 @@ public record HotelAvailabilityResponse(
             int nights,
             boolean available,
             int roomsLeft,
-            BigDecimal totalAmount) {
+            BigDecimal totalAmount,
+            List<AlternativeDateResponse> alternativeDates) {
         HotelResponse details = HotelResponse.from(hotel);
         return new HotelAvailabilityResponse(
                 details.id(),
@@ -40,6 +59,7 @@ public record HotelAvailabilityResponse(
                 nights,
                 available,
                 roomsLeft,
-                totalAmount);
+                totalAmount,
+                alternativeDates);
     }
 }

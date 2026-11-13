@@ -24,6 +24,19 @@ public interface RoomInventoryRepository extends JpaRepository<RoomInventory, Lo
             @Param("checkIn") LocalDate checkIn,
             @Param("checkOut") LocalDate checkOut);
 
+    @Query("""
+            select inventory
+            from RoomInventory inventory
+            where inventory.hotel.id in :hotelIds
+              and inventory.stayDate >= :rangeStart
+              and inventory.stayDate < :rangeEnd
+            order by inventory.hotel.id, inventory.stayDate
+            """)
+    List<RoomInventory> findForHotelsInRange(
+            @Param("hotelIds") List<Long> hotelIds,
+            @Param("rangeStart") LocalDate rangeStart,
+            @Param("rangeEnd") LocalDate rangeEnd);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
             select inventory
