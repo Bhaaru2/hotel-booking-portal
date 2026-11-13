@@ -36,8 +36,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 6c | Concurrency test and locking review | Backend | DONE |
 | 7 | Lookup + cancel (with tests) | Backend | DONE |
 | 8 | Surprise feature (backend) | Backend | DONE |
-| 9a | Frontend: hotel list + search | Frontend | CURRENT |
-| 9b | Frontend: hotel details + price quote | Frontend | UPCOMING |
+| 9a | Frontend: hotel list + search | Frontend | DONE |
+| 9b | Frontend: hotel details + price quote | Frontend | CURRENT |
 | 9c | Frontend: booking form + confirmation | Frontend | UPCOMING |
 | 9d | Frontend: lookup/cancel + alternative dates UI | Frontend | UPCOMING |
 | 10 | README, DESIGN.md, screenshots, submission | Docs | UPCOMING |
@@ -180,15 +180,16 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] Acceptance met; service and MVC tests cover nearest valid dates, bounds, pricing, and response fields (`mvn clean verify` passes)
 - Commits: `feat(search): suggest alternative dates when sold out`, `test(search): alternative date suggestions`
 
-### 9a. Frontend: hotel list + search: CURRENT
+### 9a. Frontend: hotel list + search: DONE
 - React + Vite app in `/frontend`. API base URL from `VITE_API_BASE_URL`. Handle CORS on the backend if needed.
 - Hotel cards (name, location, amenities, price per night). Search by location + check-in/check-out with date validation messages.
 - Loading and error states.
 
 **Done when:** the browser shows hotels and the search filters them.
-- Commit: `feat(frontend): hotel list and search`
+- [x] Acceptance met; strict TypeScript production build passes (`npm run build`)
+- Commits: `feat(frontend): project setup, api client and routing`, `feat(frontend): hotel list and search`
 
-### 9b. Frontend: hotel details + price quote: UPCOMING
+### 9b. Frontend: hotel details + price quote: CURRENT
 - Details page: description, amenities, availability for the chosen dates, and the total price (from the API, not calculated in the UI) before booking.
 
 **Done when:** selecting dates shows availability and the total for a hotel.
