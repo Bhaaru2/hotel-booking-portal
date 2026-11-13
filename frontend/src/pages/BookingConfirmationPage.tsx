@@ -63,7 +63,7 @@ export function BookingConfirmationPage() {
         <h1>We couldn’t load your confirmation</h1>
         <p>We couldn't load your confirmation. If you just booked, use Find my booking with your reference and email.</p>
         <div className="confirmation-actions">
-          <Link className="button button-primary" to="/coming-soon">Find my booking</Link>
+          <Link className="button button-primary" to="/find-booking">Find my booking</Link>
           <Link className="button button-secondary" to="/">Back to hotels</Link>
         </div>
       </section>
@@ -101,7 +101,7 @@ export function BookingConfirmationPage() {
 
         <p className="confirmation-note">Keep your reference and email. You will need both to view or cancel your booking.</p>
         <div className="confirmation-actions">
-          <Link className="button button-primary" to="/coming-soon">Find my booking</Link>
+          <Link className="button button-primary" to="/find-booking" state={{ reference: booking.reference }}>Find my booking</Link>
           <Link className="button button-secondary" to="/">Back to hotels</Link>
         </div>
       </div>

@@ -7,7 +7,7 @@ export function AppLayout() {
         <div className="header-inner">
           <Link className="brand" to="/">Hotel Booking Portal</Link>
           <nav aria-label="Main navigation">
-            <Link className="nav-link" to="/coming-soon">Find my booking</Link>
+            <Link className="nav-link" to="/find-booking">Find my booking</Link>
           </nav>
         </div>
       </header>

@@ -61,3 +61,16 @@ export async function createBooking(payload: BookingRequest): Promise<BookingRes
     body: JSON.stringify(payload),
   })
 }
+
+export async function findBooking(reference: string, email: string): Promise<BookingResponse> {
+  const query = new URLSearchParams({ email })
+  return request<BookingResponse>(`/bookings/${encodeURIComponent(reference)}?${query.toString()}`)
+}
+
+export async function cancelBooking(reference: string, email: string): Promise<BookingResponse> {
+  return request<BookingResponse>(`/bookings/${encodeURIComponent(reference)}/cancel`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+}
