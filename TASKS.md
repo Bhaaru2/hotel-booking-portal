@@ -29,8 +29,8 @@ Status values: `DONE` | `CURRENT` | `UPCOMING` | `BLOCKED`
 | 1 | Spring Boot skeleton + MySQL connection | Backend | DONE |
 | 2 | V1 migration: tables | Backend | DONE |
 | 3 | V2 migration: seed data | Backend | DONE |
-| 4 | Entities, repositories, `GET /api/hotels` | Backend | CURRENT |
-| 5 | Global error handler | Backend | UPCOMING |
+| 4 | Entities, repositories, `GET /api/hotels` | Backend | DONE |
+| 5 | Global error handler | Backend | CURRENT |
 | 6 | Quote + create booking (locking + tests) | Backend | UPCOMING |
 | 7 | Lookup + cancel (with tests) | Backend | UPCOMING |
 | 8 | Surprise feature (backend) | Backend | UPCOMING |
@@ -102,17 +102,17 @@ Decisions (confirm or change, then keep consistent everywhere):
 - [x] SQL defines six hotels and a generated 120-day inventory window; `mvn clean verify` passes (live DB migration not run)
 - Commit: `feat(db): seed hotels and room inventory`
 
-### 4. Entities, repositories, `GET /api/hotels`: CURRENT
+### 4. Entities, repositories, `GET /api/hotels`: DONE
 **Goal:** list hotels over REST.
 - JPA entities for hotels, room_inventory, bookings. Repositories. Response DTOs (never expose entities).
 - `GET /api/hotels?location=` returns all hotels, or those whose location contains the text (case-insensitive).
 - Response fields: id, name, location, description, amenities (as a list), pricePerNight.
 
 **Done when:** `http://localhost:8080/api/hotels` returns 6 hotels, and `?location=goa` style filtering works.
-- [ ] Acceptance met
+- [x] Acceptance met; `mvn clean verify` and the controller JSON-shape test pass
 - Commit: `feat(api): list and filter hotels`
 
-### 5. Global error handler: UPCOMING
+### 5. Global error handler: CURRENT
 **Goal:** every failure returns the same JSON shape.
 - `@RestControllerAdvice` returning `{ timestamp, status, error, message, path, fieldErrors[] }`.
 - Handle: validation errors (400, with `fieldErrors`), not found (404), conflict / no availability (409), unexpected errors (500, generic message, no stack trace leaked).
